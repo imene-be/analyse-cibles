@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+# Étape 1 : Exploration et compréhension des données (EDA)
+
 # définition des types (optimisation mémoire)
 dtype = {
     "Id": "int32",

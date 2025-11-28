@@ -1,30 +1,46 @@
-# Projet N4 — Analyse de cibles (Traitement & Visualisation des données)
+1. Optimisation et import des données
 
-## 🔍 1. Exploration et compréhension
+Pour optimiser les performances lors de l’import du fichier CSV :
 
-### 1. Importation et inspection
+Les types des colonnes ont été définis explicitement (int32, float32, category) afin de réduire la mémoire utilisée par le dataset.
 
+Cette optimisation permet à Pandas de stocker les données de manière plus compacte, surtout pour les grandes colonnes numériques et les colonnes catégorielles.
 
-▪ Optimiser les performances lors de l’import :
+dtype = {
+    "Id": "int32",
+    "gaming_interest_score": "float32",
+    "insta_design_interest_score": "float32",
+    "football_score": "float32",
+    "recommended_product": "category",
+    "campaign_success": "object",
+    "age": "float32",
+    "canal_recommande": "category"
+}
 
-- Nous avons identifié que les données étaient séparées par ;, ce qui empêchait un import correct.
+Première impression sur la qualité des données
 
-- Nous avons défini des types  explicite (int32, float32, category, bool) dans l'objectif de réduire l’usage mémoire et accélérer les opérations futures.
+Les données contiennent quelques doublons et des valeurs manquantes.
 
-1️⃣ Id (int32) : Identifiant unique de chaque personne.
-2️⃣ gaming_interest_score (float32) : Intérêt pour les jeux vidéo.
-3️⃣ insta_design_interest_score (float32) : Intérêt pour les vidéos de design sur Instagram.
-4️⃣ football_score (float32) : Intérêt pour le football.
-5️⃣ recommended_product (category) : Produit recommandé pour le phishing.
-6️⃣ campaign_success (object) : Si la campagne de phishing a réussi ou non.
-7️⃣ age (float32) : Âge de la personne.
-8️⃣ canal_recommande (category) : Support utilisé pour le phishing (Email, Instagram…).
+Certaines colonnes nécessitent d’être transformées en catégories pour réduire la mémoire.
 
-▪ Opignon sur la qualité de la donnée et de sa pertinence ?
+La pertinence des données semble correcte : chaque colonne correspond à une information utile pour l’analyse et la modélisation.
 
-- Une fois le séparateur appliqué, les données semblent bien structurées. Les colonnes contiennent des valeurs significatives pour les modéliser par la suite.
+2. Nettoyage et mise en forme
+Étapes réalisées
 
-- Toutefois, une vérification est nécessaire afin de corriger les erreurs de type ou les données faussées (ex: valeurs aberrantes, type de campaign_success).
+Suppression des doublons : toutes les lignes identiques ont été retirées pour éviter des biais dans l’analyse.
 
+Suppression des valeurs manquantes : toutes les lignes contenant des NaN ont été retirées pour garantir la cohérence du dataset.
 
-### 2. Nettoyage et mise en forme
+Transformation des colonnes : certaines colonnes (campaign_success, recommended_product, canal_recommande) ont été converties en type category pour réduire la mémoire utilisée.
+
+Justification des choix
+
+Les doublons et valeurs manquantes peuvent fausser les statistiques et les modèles.
+
+La transformation en category permet d’économiser de la mémoire tout en gardant les informations intactes.
+
+Impact du nettoyage sur la mémoire
+Moment	Mémoire utilisée
+Avant nettoyage	0.04 Mo
+Après suppression et transformation	0.02 Mo

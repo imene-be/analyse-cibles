@@ -1,78 +1,90 @@
-1. Optimisation et import des données
+🛠️ Installation & Pré-requis
+1. Cloner le projet
+git clone https://github.com/ton-repo/analyse-cibles.git
+cd analyse-cibles
 
-Pour optimiser les performances lors de l’import du fichier CSV :
+2. Installer l’environnement Python
 
-Les types des colonnes ont été définis explicitement (int32, float32, category) afin de réduire la mémoire utilisée par le dataset.
+Créer un environnement virtuel (optionnel mais recommandé) :
 
-Cette optimisation permet à Pandas de stocker les données de manière plus compacte, surtout pour les grandes colonnes numériques et les colonnes catégorielles.
+python3 -m venv venv
+source venv/bin/activate  # macOS / Linux
+venv\Scripts\activate.bat # Windows
 
-dtype = {
-    "Id": "int32",
-    "gaming_interest_score": "float32",
-    "insta_design_interest_score": "float32",
-    "football_score": "float32",
-    "recommended_product": "category",
-    "campaign_success": "object",
-    "age": "float32",
-    "canal_recommande": "category"
-}
+3. Installer les dépendances
+pip install -r requirements.txt
 
-Première impression sur la qualité des données
+▶️ Exécution des scripts
+Lancer l'exploration des données
+python3 src/exploration.py
 
-Les données contiennent quelques doublons et des valeurs manquantes.
+Lancer l’analyse statistique
+python3 src/analyse_stats.py
 
-Certaines colonnes nécessitent d’être transformées en catégories pour réduire la mémoire.
+📑 Structure du projet
+analyse-cibles/
+│
+├── data/
+│   └── dataset.csv
+│
+├── src/
+│   ├── exploration.py
+│   ├── analyse_stats.py
+│   └── datatelling.py
+│
+├── outputs/
+│   ├── graphiques/
+│   ├── rapports/
+│   └── anomalies.csv
+│
+└── README.md
 
-La pertinence des données semble correcte : chaque colonne correspond à une information utile pour l’analyse et la modélisation.
+📈 Méthodologie d’analyse
+🔍 Exploration initiale
 
-2. Nettoyage et mise en forme
-Étapes réalisées
+Vérification des données manquantes
 
-Suppression des doublons : toutes les lignes identiques ont été retirées pour éviter des biais dans l’analyse.
+Formatage des types (âge, dates, catégories produit…)
 
-Suppression des valeurs manquantes : toutes les lignes contenant des NaN ont été retirées pour garantir la cohérence du dataset.
+Suppression des doublons
 
-Transformation des colonnes : certaines colonnes (campaign_success, recommended_product, canal_recommande) ont été converties en type category pour réduire la mémoire utilisée.
+🧹 Nettoyage
 
-Justification des choix
+Correction des incohérences
 
-Les doublons et valeurs manquantes peuvent fausser les statistiques et les modèles.
+Standardisation des valeurs textuelles
 
-La transformation en category permet d’économiser de la mémoire tout en gardant les informations intactes.
+Filtrage des lignes erronées
 
-Impact du nettoyage sur la mémoire
-Moment	Mémoire utilisée
-Avant nettoyage	0.04 Mo
-Après suppression et transformation	0.02 Mo
+📏 Détection des anomalies – Méthode Z-score
+
+Nous avons utilisé le Z-score pour repérer les comportements atypiques :
+
+Formule LaTeX :
+
+Z = \frac{x - \mu}{\sigma}
 
 
-3. Analyse des anomalies
-Méthode choisie : détection via Z-score
+Une valeur est considérée comme une anomalie si :
 
-Pour identifier les comportements atypiques dans les données numériques (gaming_interest_score, insta_design_interest_score, football_score, age), nous avons utilisé la méthode statistique du Z-score.
+|Z| > 3
 
-Principe :
+📊 Analyse statistique
 
-Le Z-score mesure combien d’écarts-types une valeur s’éloigne de la moyenne.
+Distribution par âge
 
-Une valeur dont le Z-score est supérieur à 3 ou inférieur à -3 est considérée comme anomalie statistique.
+Produits les plus performants
 
-Justification du choix :
+Canaux d’acquisition les plus efficaces
 
-Méthode simple et rapide à implémenter.
+Taux de réussite par segment
 
-Permet de détecter les valeurs trop élevées ou trop faibles qui pourraient fausser l’analyse.
+🎯 Datatelling & interprétation
 
-Convient parfaitement à des données numériques continues comme nos scores et l’âge.
+Traduction des chiffres en scénarios concrets, permettant de comprendre :
 
-Colonnes analysées
-Colonne	Description
-gaming_interest_score	Score d’intérêt pour le gaming
-insta_design_interest_score	Score d’intérêt pour le design sur Instagram
-football_score	Score d’intérêt pour le football
-age	Âge des utilisateurs
-Résultats
+quels profils réagissent le mieux,
 
-Le calcul des Z-scores a permis de repérer les anomalies pour chaque colonne.
+quelles stratégies marketing sont les plus efficaces,
 
-Les valeurs retenues comme anomalies sont celles dont le Z-score absolu est supérieur à 3.
+quels segments sont sensibles à quelle sollicitation.

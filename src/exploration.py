@@ -60,9 +60,6 @@ print(df.isna().sum())
 # Suppression des lignes avec valeurs manquantes
 df = df.dropna()
 
-# Transformation des colonnes, convertir en catégorie
-# df["campaign_success"] = df["campaign_success"].astype("category")
-
 # Vérification des types après transformation
 print("\n--- Types de colonnes après nettoyage ---")
 print(df.dtypes)
@@ -90,6 +87,18 @@ numeric_cols = [
     "football_interest_score",
     "age"
 ]
+
+# 🔹 Nettoyage des colonnes pour éviter les doublons invisibles
+categorical_cols = ["recommended_product", "canal_recommande"]
+
+for col in categorical_cols:
+    df[col] = df[col].astype(str).str.strip().str.lower()
+    df[col] = df[col].str.replace(r'\s+', ' ', regex=True)
+    df[col] = df[col].astype("category")
+
+# Ajout majuscule aux catégorie
+for col in categorical_cols:
+    df[col] = df[col].str.title()
 
 # Conversion de campaign_success en booléen
 print("\n--- Valeurs uniques dans campaign_success (avant nettoyage) ---")
@@ -229,3 +238,8 @@ plt.title("Matrice de corrélation")
 plt.xticks(range(len(corr)), corr.columns, rotation=45)
 plt.yticks(range(len(corr)), corr.columns)
 plt.show()
+
+# ========================================
+# 4. Datatelling et création de l’attaque
+# ========================================
+

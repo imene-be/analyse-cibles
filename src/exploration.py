@@ -11,7 +11,7 @@ dtype = {
     "Id": "int32",
     "gaming_interest_score": "float32",
     "insta_design_interest_score": "float32",
-    "football_score": "float32",
+    "football_interest_score": "float32",
     "recommended_product": "category",
     "campaign_success": "object",
     "age": "float32",
@@ -77,23 +77,57 @@ print(df.describe())
 nb_doublons_final = df.duplicated().sum()
 print(f"\nNombre de doublons après tout nettoyage : {nb_doublons_final}")
 
-# Étape 2 : Détection d’anomalies
-
-# Colonnes numériques sur lesquelles on cherche des anomalies
+# Colonnes numériques à analyser
 numeric_cols = [
     "gaming_interest_score",
     "insta_design_interest_score",
-    "football_score",
+    "football_interest_score",
     "age"
 ]
 
-# --- Vérifier que les colonnes existent ---
-numeric_cols = [col for col in numeric_cols if col in df.columns]
+# Conversion de campaign_success en booléen
+df["campaign_success"] = df["campaign_success"].map({"yes": True, "no": False})
 
+# Vérifier que les colonnes existent réellement dans le dataset
+numeric_cols = [col for col in numeric_cols if col in df.columns]
 print("Colonnes utilisées pour la détection :", numeric_cols)
 
+# Calcul des Z-scores
 z_scores = (df[numeric_cols] - df[numeric_cols].mean()) / df[numeric_cols].std(ddof=0)
-anomaly_z = (z_scores.abs() > 3)   # seuil classique : 3 écarts-types
 
+# Détection des anomalies : valeurs dont |Z-score| > 3
+anomaly_z = (z_scores.abs() > 3)
 print("\nAnomalies détectées (Z-score) :")
 print(anomaly_z.sum())
+
+# Visualisation 
+for col in numeric_cols:
+    mean_val = df[col].mean()
+    std_val = df[col].std(ddof=0)
+    
+    # Créer des masques
+    anomalies = anomaly_z[col]           
+    normal = ~anomalies                 
+    
+    plt.figure(figsize=(10, 4))
+    
+    # Points normaux
+    plt.scatter(df.index[normal], df[col][normal], color='blue', alpha=0.7, label='Normal')
+    # Points anomalies
+    plt.scatter(df.index[anomalies], df[col][anomalies], color='red', alpha=0.9, label='Anomalie')
+    
+    # Moyenne et bornes ±3σ
+    plt.axhline(mean_val, color='green', linestyle='--', linewidth=1.5, label='Moyenne')
+    plt.axhline(mean_val + 3*std_val, color='orange', linestyle='--', linewidth=1.5, label='+3σ')
+    plt.axhline(mean_val - 3*std_val, color='orange', linestyle='--', linewidth=1.5, label='-3σ')
+    
+    # Titre et légende
+    plt.title(f'Détection d\'anomalies pour {col}', fontsize=14)
+    plt.xlabel('Index', fontsize=12)
+    plt.ylabel(col, fontsize=12)
+    plt.legend()
+    plt.show()
+
+# Supprimer les anomalies pour analyses futures
+df_clean = df[~anomaly_z.any(axis=1)]
+print(f"\nNombre de lignes après suppression des anomalies : {df_clean.shape[0]}")

@@ -44,3 +44,35 @@ Impact du nettoyage sur la mémoire
 Moment	Mémoire utilisée
 Avant nettoyage	0.04 Mo
 Après suppression et transformation	0.02 Mo
+
+
+3. Analyse des anomalies
+Méthode choisie : détection via Z-score
+
+Pour identifier les comportements atypiques dans les données numériques (gaming_interest_score, insta_design_interest_score, football_score, age), nous avons utilisé la méthode statistique du Z-score.
+
+Principe :
+
+Le Z-score mesure combien d’écarts-types une valeur s’éloigne de la moyenne.
+
+Une valeur dont le Z-score est supérieur à 3 ou inférieur à -3 est considérée comme anomalie statistique.
+
+Justification du choix :
+
+Méthode simple et rapide à implémenter.
+
+Permet de détecter les valeurs trop élevées ou trop faibles qui pourraient fausser l’analyse.
+
+Convient parfaitement à des données numériques continues comme nos scores et l’âge.
+
+Colonnes analysées
+Colonne	Description
+gaming_interest_score	Score d’intérêt pour le gaming
+insta_design_interest_score	Score d’intérêt pour le design sur Instagram
+football_score	Score d’intérêt pour le football
+age	Âge des utilisateurs
+Résultats
+
+Le calcul des Z-scores a permis de repérer les anomalies pour chaque colonne.
+
+Les valeurs retenues comme anomalies sont celles dont le Z-score absolu est supérieur à 3.

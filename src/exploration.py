@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+# ============================================================
 # 🔍 1. EXPLORATION & COMPRÉHENSION DES DONNÉES (EDA)
+# ============================================================
+print("\n=== PARTIE 1 : EXPLORATION & COMPRÉHENSION DES DONNÉES (EDA) ===")
 
 # définition des types (optimisation mémoire)
 dtype = {
@@ -31,42 +34,54 @@ memoire_avant = df.memory_usage(deep=True).sum() / 1024**2
 print(f"\nMémoire utilisée avant nettoyage : {memoire_avant:.2f} Mo")
 
 
-# Nettoyage et mise en forme
+# ============================================================
+# 🧹 1. NETTOYAGE & PRÉPARATION DES DONNÉES
+# ============================================================
+print("\n=== PARTIE NETTOYAGE & OPTIMISATION MÉMOIRE ===")
 
-print("\n--- Statistiques descriptives ---")
-print(df.describe())
-
-# Doublons
+# --- Suppression des doublons ---
 nb_doublons_avant = df.duplicated().sum()
 print(f"\nNombre de doublons avant suppression : {nb_doublons_avant}")
-
-if nb_doublons_avant > 0:
-    print("\n--- Doublons avant suppression ---")
-    print(df[df.duplicated(keep=False)])
-
 df = df.drop_duplicates()
 
-# Valeurs manquantes
-print("\n--- Valeurs manquantes par colonne ---")
+# --- Suppression des valeurs manquantes ---
+print("\nValeurs manquantes par colonne :")
 print(df.isna().sum())
-
 df = df.dropna()
 
-# Types après nettoyage
-print("\n--- Types de colonnes après nettoyage ---")
+# --- Nettoyage des colonnes catégorielles ---
+categorical_cols = ["recommended_product", "canal_recommande"]
+
+for col in categorical_cols:
+    df[col] = df[col].astype(str)  # Convertir en string si besoin
+    df[col] = df[col].str.strip().str.lower().str.replace(r'\s+', ' ', regex=True)
+    df[col] = df[col].str.title()
+    df[col] = df[col].astype("category")  # Conversion finale en category
+
+# --- Nettoyage campaign_success ---
+df["campaign_success"] = df["campaign_success"].astype(str).str.strip().str.lower()
+df["campaign_success"] = df["campaign_success"].map({"true": True, "false": False})
+
+# --- Vérification types et mémoire ---
+print("\nTypes après nettoyage :")
 print(df.dtypes)
 
 memoire_apres = df.memory_usage(deep=True).sum() / 1024**2
 print(f"\nMémoire utilisée après nettoyage : {memoire_apres:.2f} Mo")
 
-print("\n--- Statistiques descriptives finales ---")
+# --- Statistiques descriptives finales ---
+print("\nStatistiques descriptives finales :")
 print(df.describe())
 
+# --- Vérification des doublons finaux ---
 nb_doublons_final = df.duplicated().sum()
-print(f"\nNombre de doublons après tout nettoyage : {nb_doublons_final}")
+print(f"\nNombre de doublons après nettoyage : {nb_doublons_final}")
 
 
-# 🕵 2. DÉTECTION D’ANOMALIES
+# ============================================================
+# 🕵️ 2. DÉTECTION D’ANOMALIES (Z-SCORE)
+# ============================================================
+print("\n=== PARTIE 2 : DÉTECTION D’ANOMALIES (Z-SCORE) ===")
 
 numeric_cols = [
     "gaming_interest_score",
@@ -106,7 +121,12 @@ anomaly_z = (z_scores.abs() > 3)
 print("\nAnomalies détectées (Z-score) :")
 print(anomaly_z.sum())
 
-# Visualisation anomalies
+
+# ============================================================
+# 👁️‍🗨️ 2. VISUALISATION DES ANOMALIES
+# ============================================================
+print("\n=== PARTIE 2B : VISUALISATION DES ANOMALIES ===")
+
 for col in numeric_cols:
     mean_val = df[col].mean()
     std_val = df[col].std(ddof=0)
@@ -134,7 +154,10 @@ df_clean = df[~anomaly_z.any(axis=1)]
 print(f"\nNombre de lignes après suppression des anomalies : {df_clean.shape[0]}")
 
 
+# ============================================================
 # 📈 3. ANALYSE STATISTIQUE (KPI)
+# ============================================================
+print("\n=== PARTIE 3 : ANALYSE STATISTIQUE (KPI) ===")
 
 df_stats = df_clean.copy()
 
@@ -190,7 +213,11 @@ plt.ylabel("Taux de réussite")
 plt.show()
 
 
-# MATRICE DE CORRÉLATION
+# ============================================================
+# 🔗 4. MATRICE DE CORRÉLATION
+# ============================================================
+print("\n=== PARTIE 4 : MATRICE DE CORRÉLATION ===")
+
 score_cols = [
     "gaming_interest_score",
     "insta_design_interest_score",
@@ -210,4 +237,3 @@ plt.title("Matrice de corrélation")
 plt.xticks(range(len(corr)), corr.columns, rotation=45)
 plt.yticks(range(len(corr)), corr.columns)
 plt.show()
-

@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ============================================================
-# 🔍 1. EXPLORATION & COMPRÉHENSION DES DONNÉES (EDA)
+# 🔍 EXPLORATION & COMPRÉHENSION DES DONNÉES (EDA)
 # ============================================================
 print("\n=== PARTIE 1 : EXPLORATION & COMPRÉHENSION DES DONNÉES (EDA) ===")
 

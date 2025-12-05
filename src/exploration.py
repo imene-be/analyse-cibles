@@ -53,10 +53,10 @@ df = df.dropna()
 categorical_cols = ["recommended_product", "canal_recommande"]
 
 for col in categorical_cols:
-    df[col] = df[col].astype(str)  # Convertir en string si besoin
+    df[col] = df[col].astype(str)  
     df[col] = df[col].str.strip().str.lower().str.replace(r'\s+', ' ', regex=True)
     df[col] = df[col].str.title()
-    df[col] = df[col].astype("category")  # Conversion finale en category
+    df[col] = df[col].astype("category") 
 
 # Nettoyage campaign_success 
 df["campaign_success"] = df["campaign_success"].astype(str).str.strip().str.lower()

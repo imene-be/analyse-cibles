@@ -39,17 +39,17 @@ print(f"\nMémoire utilisée avant nettoyage : {memoire_avant:.2f} Mo")
 # ============================================================
 print("\n=== PARTIE NETTOYAGE & OPTIMISATION MÉMOIRE ===")
 
-# --- Suppression des doublons ---
+# Suppression des doublons 
 nb_doublons_avant = df.duplicated().sum()
 print(f"\nNombre de doublons avant suppression : {nb_doublons_avant}")
 df = df.drop_duplicates()
 
-# --- Suppression des valeurs manquantes ---
+# Suppression des valeurs manquantes 
 print("\nValeurs manquantes par colonne :")
 print(df.isna().sum())
 df = df.dropna()
 
-# --- Nettoyage des colonnes catégorielles ---
+# Nettoyage des colonnes catégorielles 
 categorical_cols = ["recommended_product", "canal_recommande"]
 
 for col in categorical_cols:
@@ -58,22 +58,22 @@ for col in categorical_cols:
     df[col] = df[col].str.title()
     df[col] = df[col].astype("category")  # Conversion finale en category
 
-# --- Nettoyage campaign_success ---
+# Nettoyage campaign_success 
 df["campaign_success"] = df["campaign_success"].astype(str).str.strip().str.lower()
 df["campaign_success"] = df["campaign_success"].map({"true": True, "false": False})
 
-# --- Vérification types et mémoire ---
+# Vérification types et mémoire 
 print("\nTypes après nettoyage :")
 print(df.dtypes)
 
 memoire_apres = df.memory_usage(deep=True).sum() / 1024**2
 print(f"\nMémoire utilisée après nettoyage : {memoire_apres:.2f} Mo")
 
-# --- Statistiques descriptives finales ---
+# Statistiques descriptives finales 
 print("\nStatistiques descriptives finales :")
 print(df.describe())
 
-# --- Vérification des doublons finaux ---
+# Vérification des doublons finaux 
 nb_doublons_final = df.duplicated().sum()
 print(f"\nNombre de doublons après nettoyage : {nb_doublons_final}")
 
